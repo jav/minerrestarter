@@ -1,4 +1,8 @@
 #!/usr/bin/env python2
+
+#Made by Javier Ubillos, javier@ubillos.org, github.com/jav
+#For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm
+
 import argparse
 import ConfigParser
 import json
@@ -24,7 +28,8 @@ def main(argv=None):
                         help="Specify config file", default="config.ini", metavar="FILE")
     args, remaining_argv = conf_parser.parse_known_args()
 
-    defaults = { "option":"default" }
+    defaults = {    "minercmd":"echo",
+                    "monitorinterval":120}
 
     if args.conf_file:
         config = ConfigParser.SafeConfigParser()
@@ -37,11 +42,30 @@ def main(argv=None):
         # Inherit options from config_parser
         parents=[conf_parser]
         )
+
+    parser.add_argument ("--minercmd")
+    parser.add_argument ("--monitorinterval");
     parser.set_defaults(**defaults)
-    parser.add_argument("--minercmd")
+
     args = parser.parse_args(remaining_argv)
-    print "Minercmd is \"{}\"".format(args.minercmd)
+
+    miner_cmd = args.minercmd
+    monitor_func = miner_monitor()
+    monitor_interval = args.monitorinterval
+
+    run_miner(miner_cmd, monitor_func, monitor_interval)
+
     return(0)
+
+def miner_monitor():
+    pass
+
+def run_miner(miner_cmd, monitor_func, monitor_interval):
+    print "miner_cmd: %s" % miner_cmd
+    print "monitor_func: %s" % monitor_func
+    print "monitor_interval: %s" % monitor_interval
+
+
 
 if __name__ == "__main__":
     sys.exit(main())
