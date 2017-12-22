@@ -6,7 +6,9 @@
 import argparse
 import ConfigParser
 import json
+import re
 import sys
+import urllib2
 
 def main(argv=None):
     # Do argv default this way, as doing it in the functional
@@ -60,8 +62,15 @@ def main(argv=None):
 def miner_monitor():
     pass
 
-def get_hashrate(endpoint):
-    return 100
+def get_hashrate(endpoint, interval):
+    req = urllib2.Request(url=endpoint)
+    urlopen = urllib2.urlopen(req)
+    response = urlopen.read()
+    hashrates = re.search("<th>Totals:</th><td>([^<]*)</td><td>([^<]*)</td><td>([^<]*)</td>", response).group(1, 2, 3)
+    hashrate = dict(zip(['10s', '60s', '15m'], hashrates))[interval]
+    if(len(hashrate) <= 0):
+        return 0
+    return float(hashrate)
 
 def run_miner(miner_cmd, monitor_func, monitor_interval):
     print "miner_cmd: %s" % miner_cmd
