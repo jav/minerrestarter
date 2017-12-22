@@ -60,6 +60,9 @@ def main(argv=None):
 def miner_monitor():
     pass
 
+def get_hashrate(endpoint):
+    return 100
+
 def run_miner(miner_cmd, monitor_func, monitor_interval):
     print "miner_cmd: %s" % miner_cmd
     print "monitor_func: %s" % monitor_func
