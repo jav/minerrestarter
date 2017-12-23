@@ -98,9 +98,13 @@ def main(argv=None):
     return(0)
 
 def kill_miner(kill_cmd):
-    subprocess.check_output([kill_cmd], shell=True)
+    try:
+        subprocess.check_output([kill_cmd], shell=True)
+    except subprocess.CalledProcessError as e:
+        print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
 
 def run_miner(start_cmd):
+    # exceptions should cause a failure
     subprocess.check_output([start_cmd], shell=True)
 
 def get_hashrate(endpoint, interval):
@@ -110,7 +114,7 @@ def get_hashrate(endpoint, interval):
         response = urlopen.read()
     #if we get an exception, it's most likely because the miner isn't running
     #in these cases, consider hashrate to be = 0
-    except (URLError, ValueError):
+    except (urllib2.URLError, ValueError):
             return 0
     hashrates = re.search("<th>Totals:</th><td>([^<]*)</td><td>([^<]*)</td><td>([^<]*)</td>", response).group(1, 2, 3)
     hashrate = dict(zip(['10s', '60s', '15m'], hashrates))[interval]
