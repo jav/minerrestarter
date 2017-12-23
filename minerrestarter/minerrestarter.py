@@ -16,7 +16,7 @@ import urllib2
 current_time = lambda: int(round(time.time() * 1000))
 def countdown(from_time):
   number=''
-  for i in xrange(from_time,-1,-1):
+  for i in xrange(int(from_time),-1,-1):
     for _ in xrange(len(number)):
       sys.stdout.write('\b')
     number=str(i)+' '
