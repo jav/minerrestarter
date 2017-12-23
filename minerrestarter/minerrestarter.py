@@ -97,7 +97,7 @@ def main(argv=None):
             print "Waiting for miner to stop"
             countdown(wait_for_miner_to_stop_time)
             print "Starting miner process"
-            run_miner(miner_cmd)
+            run_miner(start_cmd)
             print "Waiting for miner to start"
             countdown(wait_for_miner_to_start_time)
         else:
