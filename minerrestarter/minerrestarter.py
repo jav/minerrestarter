@@ -55,36 +55,39 @@ def main(argv=None):
         parents=[conf_parser]
         )
 
-    parser.add_argument ("--minercmd")
+    parser.add_argument ("--startcmd")
+    parser.add_argument ("--killcmd")
     parser.add_argument ("--monitorinterval");
     parser.set_defaults(**defaults)
 
     args = parser.parse_args(remaining_argv)
 
-    miner_cmd = args.minercmd
+    start_cmd = args.startcmd.split(" ")
+    kill_cmd = args.killcmd.split(" ")
     monitor_interval = args.monitorinterval
-    miner_name = os.path.basename(miner_cmd)
     wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
     wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
     monitor_endpoint = args.monitor_endpoint
-    minimum_hashrate = args.minimum_hashrate
+    minimum_hashrate = float(args.minimum_hashrate)
 
     #Run loop
 
     print "starting"
-    print "miner_cmd: %s" % miner_cmd
+    print "start_cmd: %s" % start_cmd
+    print "kill_cmd: %s" % kill_cmd
     print "monitor_interval: %s" % monitor_interval
     print "wait_for_miner_to_start_time: %s" % wait_for_miner_to_start_time
     print "wait_for_miner_to_stop_time: %s" % wait_for_miner_to_stop_time
-    print "miner_name: %s" % miner_name
     print "monitor_endpoint: %s" % monitor_endpoint
 
     start_time = current_time()
 
     while(True):
         #check hashrate
-        if get_hashrate(monitor_endpoint, "60s") < minimum_hashrate:
-            kill_miner(miner_name)
+        hashrate = get_hashrate(monitor_endpoint, "60s")
+        if hashrate < minimum_hashrate:
+            print "Hashrate found to be %s, lower than the limit %s" % (hashrate, minimum_hashrate)
+            kill_miner(kill_cmd)
             print "Waiting for miner to stop"
             countdown(wait_for_miner_to_stop_time)
             run_miner(miner_cmd)
@@ -94,11 +97,11 @@ def main(argv=None):
 
     return(0)
 
-def kill_miner(miner_name):
-    subprocess.check_output(["taskkill /im %s", miner_name])
+def kill_miner(kill_cmd):
+    subprocess.check_output([kill_cmd], shell=True)
 
-def run_miner(miner_cmd):
-    subprocess.check_output([miner_cmd])
+def run_miner(start_cmd):
+    subprocess.check_output([start_cmd], shell=True)
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
