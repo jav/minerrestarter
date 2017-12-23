@@ -15,10 +15,14 @@ import urllib2
 
 current_time = lambda: int(round(time.time() * 1000))
 def countdown(from_time):
-    for i in xrange(from_time,0,-1):
-        time.sleep(1)
-        sys.stdout.write(str(i)+' ')
-        sys.stdout.flush()
+  number=''
+  for i in xrange(from_time,-1,-1):
+    for _ in xrange(len(number)):
+      sys.stdout.write('\b')
+    number=str(i)+' '
+    sys.stdout.write(number)
+    sys.stdout.flush()
+    time.sleep(1)
 
 def main(argv=None):
     # Do argv default this way, as doing it in the functional
