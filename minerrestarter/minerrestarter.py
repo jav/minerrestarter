@@ -93,7 +93,7 @@ def main(argv=None):
             run_miner(miner_cmd)
             print "Waiting for miner to start"
             countdown(wait_for_miner_to_start_time)
-        sleep(monitor_interval)
+        time.sleep(monitor_interval)
 
     return(0)
 
