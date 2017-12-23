@@ -88,19 +88,21 @@ def main(argv=None):
 
     while(True):
         #check hashrate
-        print "checking hashrate"
+        print "checking hashrate..."
         hashrate = get_hashrate(monitor_endpoint, "60s")
         if hashrate < minimum_hashrate:
             print "Hashrate found to be %s, lower than the limit %s" % (hashrate, minimum_hashrate)
+            print "Killing miner process"
             kill_miner(kill_cmd)
             print "Waiting for miner to stop"
             countdown(wait_for_miner_to_stop_time)
+            print "Starting miner process"
             run_miner(miner_cmd)
             print "Waiting for miner to start"
             countdown(wait_for_miner_to_start_time)
         else:
-            print "hashrate was ok: %s" % hashrate
-        print "sleeping for %s seconds" % monitor_intervals
+            print "hashrate was ok: %s (limit: %s)" % (hashrate, minimum_hashrate)
+        print "sleeping for %s seconds" % monitor_interval
         countdown(monitor_interval)
 
     return(0)
