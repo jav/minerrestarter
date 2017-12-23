@@ -64,13 +64,19 @@ def miner_monitor():
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
-    urlopen = urllib2.urlopen(req)
-    response = urlopen.read()
+    try:
+        urlopen = urllib2.urlopen(req)
+        response = urlopen.read()
+    #if we get an exception, it's most likely because the miner isn't running
+    #in these cases, consider hashrate to be = 0
+    except (URLError, ValueError):
+            return 0
     hashrates = re.search("<th>Totals:</th><td>([^<]*)</td><td>([^<]*)</td><td>([^<]*)</td>", response).group(1, 2, 3)
     hashrate = dict(zip(['10s', '60s', '15m'], hashrates))[interval]
+    #hashrate '0' is often represented as a blank space
     if(len(hashrate) <= 0):
         return 0
-    return float(hashrate)
+    return float(hashrate.strip())
 
 def run_miner(miner_cmd, monitor_func, monitor_interval):
     print "miner_cmd: %s" % miner_cmd
