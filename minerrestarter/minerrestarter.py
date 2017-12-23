@@ -8,7 +8,15 @@ import ConfigParser
 import json
 import re
 import sys
+import time
 import urllib2
+
+current_time = lambda: int(round(time.time() * 1000))
+def countdown(from_time):
+    for i in xrange(from_time,0,-1):
+        time.sleep(1)
+        sys.stdout.write(str(i)+' ')
+        sys.stdout.flush()
 
 def main(argv=None):
     # Do argv default this way, as doing it in the functional
