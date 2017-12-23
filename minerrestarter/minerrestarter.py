@@ -6,8 +6,10 @@
 import argparse
 import ConfigParser
 import json
+import os
 import re
 import sys
+import subprocess
 import time
 import urllib2
 
@@ -60,15 +62,43 @@ def main(argv=None):
     args = parser.parse_args(remaining_argv)
 
     miner_cmd = args.minercmd
-    monitor_func = miner_monitor()
     monitor_interval = args.monitorinterval
+    miner_name = os.path.basename(miner_cmd)
+    wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
+    wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
+    monitor_endpoint = args.monitor_endpoint
+    minimum_hashrate = args.minimum_hashrate
 
-    run_miner(miner_cmd, monitor_func, monitor_interval)
+    #Run loop
+
+    print "starting"
+    print "miner_cmd: %s" % miner_cmd
+    print "monitor_interval: %s" % monitor_interval
+    print "wait_for_miner_to_start_time: %s" % wait_for_miner_to_start_time
+    print "wait_for_miner_to_stop_time: %s" % wait_for_miner_to_stop_time
+    print "miner_name: %s" % miner_name
+    print "monitor_endpoint: %s" % monitor_endpoint
+
+    start_time = current_time()
+
+    while(True):
+        #check hashrate
+        if get_hashrate(monitor_endpoint, "60s") < minimum_hashrate:
+            kill_miner(miner_name)
+            print "Waiting for miner to stop"
+            countdown(wait_for_miner_to_stop_time)
+            run_miner(miner_cmd)
+            print "Waiting for miner to start"
+            countdown(wait_for_miner_to_start_time)
+        sleep(monitor_interval)
 
     return(0)
 
-def miner_monitor():
-    pass
+def kill_miner(miner_name):
+    subprocess.check_output(["taskkill /im %s", miner_name])
+
+def run_miner(miner_cmd):
+    subprocess.check_output([miner_cmd])
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
@@ -86,10 +116,6 @@ def get_hashrate(endpoint, interval):
         return 0
     return float(hashrate.strip())
 
-def run_miner(miner_cmd, monitor_func, monitor_interval):
-    print "miner_cmd: %s" % miner_cmd
-    print "monitor_func: %s" % monitor_func
-    print "monitor_interval: %s" % monitor_interval
 
 
 
