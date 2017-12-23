@@ -68,7 +68,7 @@ def main(argv=None):
 
     start_cmd = args.startcmd.split(" ")
     kill_cmd = args.killcmd.split(" ")
-    monitor_interval = float(args.monitorinterval)
+    monitor_interval = int(args.monitorinterval)
     wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
     wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
     monitor_endpoint = args.monitor_endpoint
