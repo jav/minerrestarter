@@ -12,4 +12,5 @@ setup(name='minerrestarter',
       install_requires=[
           'mock',
       ],
+      console=['minerrestarter'],
       zip_safe=False)
