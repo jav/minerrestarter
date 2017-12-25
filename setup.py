@@ -1,4 +1,5 @@
 from setuptools import setup
+import py2exe
 
 setup(name='minerrestarter',
       version='0.0.0',
