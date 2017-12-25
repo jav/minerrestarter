@@ -74,7 +74,7 @@ def main(argv=None):
     monitor_endpoint = args.monitor_endpoint
     minimum_hashrate = float(args.minimum_hashrate)
 
-    #Run loop
+    #start
 
     print "starting"
     print "start_cmd: %s" % start_cmd
@@ -85,6 +85,8 @@ def main(argv=None):
     print "monitor_endpoint: %s" % monitor_endpoint
 
     start_time = current_time()
+
+    #Run loop
 
     while(True):
         #check hashrate
@@ -115,7 +117,7 @@ def kill_miner(kill_cmd):
 
 def run_miner(start_cmd):
     # exceptions should cause a failure
-    subprocess.check_output([start_cmd], shell=True)
+    subprocess.check_output(start_cmd, shell=True)
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
