@@ -3,7 +3,8 @@
 
 [Defaults]
 startcmd=xmr-stak-amd-notls.exe
-killcmd=taskkill /f /im stak-xmr-amd-notls.exe
+killcmd=taskkill /f /im xmr-stak-amd-notls.exe
+process_name=xmr-stak-amd-notls.exe
 monitorinterval=60
 monitor_endpoint=http://127.0.0.1
 wait_for_miner_to_stop_time=60
