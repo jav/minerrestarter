@@ -1,0 +1,11 @@
+#Made by Javier Ubillos, javier@ubillos.org, github.com/jav
+#For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm
+
+[Defaults]
+startcmd=xmr-stak-amd-notls.exe
+killcmd=taskkill /f /im stak-xmr-amd-notls.exe
+monitorinterval=60
+monitor_endpoint=http://127.0.0.1
+wait_for_miner_to_stop_time=60
+wait_for_miner_to_start_time=120
+minimum_hashrate=500
