@@ -125,7 +125,6 @@ def run_miner(start_cmd):
     subprocess.check_output(start_cmd, shell=True)
 
 def is_miner_process_running(miner_process_name):
-    print "checking if %s is running" % miner_process_name
     return miner_process_name in (p.name() for p in psutil.process_iter())
 
 def get_hashrate(endpoint, interval):
