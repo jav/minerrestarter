@@ -66,8 +66,8 @@ def main(argv=None):
 
     args = parser.parse_args(remaining_argv)
 
-    start_cmd = args.startcmd.split(" ")
-    kill_cmd = args.killcmd.split(" ")
+    start_cmd = args.startcmd
+    kill_cmd = args.killcmd
     monitor_interval = int(args.monitorinterval)
     wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
     wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
@@ -111,7 +111,7 @@ def main(argv=None):
 
 def kill_miner(kill_cmd):
     try:
-        subprocess.check_output([kill_cmd], shell=True)
+        subprocess.check_output(kill_cmd, shell=True)
     except subprocess.CalledProcessError as e:
         print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
 
