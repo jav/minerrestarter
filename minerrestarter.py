@@ -59,9 +59,9 @@ def main(argv=None):
         parents=[conf_parser]
         )
 
-    parser.add_argument ("--startcmd")
-    parser.add_argument ("--killcmd")
-    parser.add_argument ("--monitorinterval");
+    parser.add_argument("--startcmd")
+    parser.add_argument("--killcmd")
+    parser.add_argument("--monitorinterval");
     parser.set_defaults(**defaults)
 
     args = parser.parse_args(remaining_argv)
