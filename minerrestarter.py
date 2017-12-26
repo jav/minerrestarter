@@ -7,6 +7,7 @@ import argparse
 import ConfigParser
 import json
 import os
+import psutil
 import re
 import sys
 import subprocess
@@ -14,11 +15,14 @@ import time
 import urllib2
 
 current_time = lambda: int(round(time.time() * 1000))
-def countdown(from_time):
+def countdown(from_time, func=None):
   number=''
   for i in xrange(int(from_time),-1,-1):
     for _ in xrange(len(number)):
       sys.stdout.write('\b')
+      if func is not None:
+          if func():
+              return
     number=str(i)+' '
     sys.stdout.write(number)
     sys.stdout.flush()
@@ -68,6 +72,7 @@ def main(argv=None):
 
     start_cmd = args.startcmd
     kill_cmd = args.killcmd
+    process_name = args.process_name
     monitor_interval = int(args.monitorinterval)
     wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
     wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
@@ -75,10 +80,10 @@ def main(argv=None):
     minimum_hashrate = float(args.minimum_hashrate)
 
     #start
-
     print "starting"
     print "start_cmd: %s" % start_cmd
     print "kill_cmd: %s" % kill_cmd
+    print "proces_name: %s" % process_name
     print "monitor_interval: %s" % monitor_interval
     print "wait_for_miner_to_start_time: %s" % wait_for_miner_to_start_time
     print "wait_for_miner_to_stop_time: %s" % wait_for_miner_to_stop_time
@@ -97,14 +102,14 @@ def main(argv=None):
             print "Killing miner process"
             kill_miner(kill_cmd)
             print "Waiting for miner to stop"
-            countdown(wait_for_miner_to_stop_time)
+            countdown(wait_for_miner_to_stop_time, lambda : not is_miner_process_running(process_name))
             print "Starting miner process"
             run_miner(start_cmd)
-            print "Waiting for miner to start"
+            print "Waiting for miner to start before starting to monitor"
             countdown(wait_for_miner_to_start_time)
         else:
             print "hashrate was ok: %s (limit: %s)" % (hashrate, minimum_hashrate)
-        print "sleeping for %s seconds" % monitor_interval
+            print "sleeping for %s seconds" % monitor_interval
         countdown(monitor_interval)
 
     return(0)
@@ -118,6 +123,10 @@ def kill_miner(kill_cmd):
 def run_miner(start_cmd):
     # exceptions should cause a failure
     subprocess.check_output(start_cmd, shell=True)
+
+def is_miner_process_running(miner_process_name):
+    print "checking if %s is running" % miner_process_name
+    return miner_process_name in (p.name() for p in psutil.process_iter())
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
