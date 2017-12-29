@@ -8,9 +8,13 @@ setup(name='minerrestarter',
       author='Javier Ubillos',
       author_email='javier@ubillos.org',
       license='GPL3',
-      packages=['minerrestarter'],
+      options = {"py2exe": {"packages": ["encodings"]}},
       install_requires=[
-          'mock',
+          'psutil'
       ],
-      console=['minerrestarter'],
+      tests_requires=[
+          'mock',
+          'nose'
+      ],
+      console=['minerrestarter.py'],
       zip_safe=False)

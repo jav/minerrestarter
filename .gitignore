@@ -6,3 +6,5 @@ include/
 local
 lib
 config.ini
+dist/*
+build/*
