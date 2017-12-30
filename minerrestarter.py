@@ -5,6 +5,7 @@
 
 import argparse
 import ConfigParser
+import ctypes
 import json
 import os
 import platform
@@ -15,10 +16,14 @@ import subprocess
 import time
 import urllib2
 
-if platform.system() is "Windows":
-    import admin
-
 current_time = lambda: int(round(time.time() * 1000))
+
+def is_windows_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
 def countdown(from_time, func=None):
   number=''
   for i in xrange(int(from_time),-1,-1):
@@ -102,9 +107,6 @@ def main(argv=None):
     config = get_config(argv)
 
     print "!!! START !!!"
-    if platform.system() is "Windows":
-        if not admin.isUserAdmin():
-            admin.runAsAdmin()
     print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
 
     start_time = current_time()
@@ -143,4 +145,12 @@ def main(argv=None):
     return(0)
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    if platform.system() == "Linux" or is_windows_admin():
+        sys.exit(main(sys.argv))
+    else:
+        # Re-run the program with admin rights
+        print "Asking for admin access... (will spawn another window if access granted)"
+        print "DEBUG: sys.executable: %s" % (sys.executable, )
+        print "DEBUG: __file__: %s" % (__file__, )
+        cmd = u"%s %s" % (sys.executable, __file__)
+        ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)

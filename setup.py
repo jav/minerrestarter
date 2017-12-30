@@ -9,9 +9,9 @@ setup(name='minerrestarter',
       author_email='javier@ubillos.org',
       license='GPL3',
       options = {"py2exe": {"packages": ["encodings"]}},
+      uac_execution_info= "requireAdministrator",
       install_requires=[
-          'psutil',
-          'pypiwin32'
+          'psutil'
       ],
       tests_requires=[
           'mock',
