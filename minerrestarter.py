@@ -14,6 +14,9 @@ import subprocess
 import time
 import urllib2
 
+if platform.system() is "Windows":
+    import admin
+
 current_time = lambda: int(round(time.time() * 1000))
 def countdown(from_time, func=None):
   number=''
@@ -98,6 +101,9 @@ def main(argv=None):
     config = get_config(argv)
 
     print "!!! START !!!"
+    if platform.system() is "Windows":
+        if not admin.isUserAdmin():
+            admin.runAsAdmin()
     print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
 
     start_time = current_time()

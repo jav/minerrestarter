@@ -10,7 +10,8 @@ setup(name='minerrestarter',
       license='GPL3',
       options = {"py2exe": {"packages": ["encodings"]}},
       install_requires=[
-          'psutil'
+          'psutil',
+          'pypiwin32'
       ],
       tests_requires=[
           'mock',
