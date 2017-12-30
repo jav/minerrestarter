@@ -127,8 +127,8 @@ def main(argv=None):
         else:
             print "hashrate was ok: %s (limit: %s)" % (hashrate, config['minimum_hashrate'])
 
-        print "sleeping for %s seconds" % monitor_interval
-        countdown(monitor_interval)
+        print "sleeping for %s seconds before checking again..." % (config['monitor_interval'], )
+        countdown(config['monitor_interval'])
 
     return(0)
 
