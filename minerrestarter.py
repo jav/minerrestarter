@@ -7,6 +7,7 @@ import argparse
 import ConfigParser
 import json
 import os
+import platform
 import psutil
 import re
 import sys
@@ -108,13 +109,15 @@ def main(argv=None):
 
     start_time = current_time()
 
+    hashrate = config['minimum_hashrate']
     #LOGIC LOOP
     while(True):
         # Check if miner is running
         if(not is_miner_process_running(config['process_name'])):
             print "Miner process is not running, starting the process."
             run_miner(config['start_cmd'], config['noop'])
-
+            countdown(config['wait_for_miner_to_start_time'])
+            continue
         #check hashrate
 
         if(is_miner_process_running(config['process_name'])):
@@ -130,6 +133,7 @@ def main(argv=None):
             run_miner(config['start_cmd'], config['noop'])
             print "Waiting for miner to start before starting to monitor"
             countdown(config['wait_for_miner_to_start_time'])
+            continue
         else:
             print "hashrate was ok: %s (limit: %s)" % (hashrate, config['minimum_hashrate'])
 
