@@ -3,6 +3,7 @@
 
 [Defaults]
 startcmd=xmr-stak-amd-notls.exe
+#start cmd.exe /C "cd /d C:\Users\YOUR_USER\xmr-stak-win64 && xmr-stak.exe"
 killcmd=taskkill /f /im xmr-stak-amd-notls.exe
 process_name=xmr-stak-amd-notls.exe
 monitorinterval=60
