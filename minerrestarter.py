@@ -117,13 +117,13 @@ def main(argv=None):
 
         if hashrate < config['minimum_hashrate']:
             print "Hashrate lower than minimum_hashrate: %s => Will restart miner." % (config['minimum_hashrate'], )
-            kill_miner(kill_cmd, config['noop'])
+            kill_miner(config['kill_cmd'], config['noop'])
             print "Waiting for miner to stop"
-            countdown(wait_for_miner_to_stop_time, lambda : not is_miner_process_running(config['process_name']))
+            countdown(config['wait_for_miner_to_stop_time'], lambda : not is_miner_process_running(config['process_name']))
             print "Starting miner process"
             run_miner(config['start_cmd'], config['noop'])
             print "Waiting for miner to start before starting to monitor"
-            countdown(wait_for_miner_to_start_time)
+            countdown(config['wait_for_miner_to_start_time'])
         else:
             print "hashrate was ok: %s (limit: %s)" % (hashrate, config['minimum_hashrate'])
 
