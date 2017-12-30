@@ -53,13 +53,19 @@ def get_config(argv):
 
     return config
 
-def kill_miner(kill_cmd):
+def kill_miner(kill_cmd, noop=False):
+    if(noop):
+        print "Kill miner."
+        return
     try:
         subprocess.check_output(kill_cmd, shell=True)
     except subprocess.CalledProcessError as e:
         print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
 
-def run_miner(start_cmd):
+def run_miner(start_cmd, noop=False):
+    if(noop):
+        print "Start miner."
+        return
     # exceptions should cause a failure
     subprocess.check_output(start_cmd, shell=True)
 
