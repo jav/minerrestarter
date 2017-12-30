@@ -8,3 +8,4 @@ lib
 config.ini
 dist/*
 build/*
+config.json

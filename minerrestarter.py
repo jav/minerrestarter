@@ -34,52 +34,28 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    # Parse any conf_file specification
-    # We make this parser with add_help=False so that
-    # it doesn't parse -h and print help.
-    conf_parser = argparse.ArgumentParser(
-        description=__doc__, # printed with -h/--help
-        # Don't mess with format of description
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        # Turn off help, so we print all options in response to -h
-        add_help=False
-        )
-    conf_parser.add_argument("-c", "--conf_file",
-                        help="Specify config file", default="config.ini", metavar="FILE")
-    args, remaining_argv = conf_parser.parse_known_args()
 
-    defaults = {    "minercmd":"echo",
-                    "monitorinterval":120}
+    conf_parser = argparse.ArgumentParser(        )
+    conf_parser.add_argument("-c", "--conf-file",
+                        help="Specify config file", default="config.json", metavar="FILE")
 
-    if args.conf_file:
-        config = ConfigParser.SafeConfigParser()
-        config.read([args.conf_file])
-        defaults.update(dict(config.items("Defaults")))
+    conf_parser.add_argument("-n", "--noop",
+                        help="Don't do anything, just print out what's detected and what the expected action would be.",
+                        )
+    args = vars(conf_parser.parse_args())
 
-    # Parse rest of arguments
-    # Don't suppress add_help here so it will handle -h
-    parser = argparse.ArgumentParser(
-        # Inherit options from config_parser
-        parents=[conf_parser]
-        )
+    #Config file _must_ exist
+    assert(os.path.isfile(args['conf_file']))
+    config = json.load(open(args['conf_file']))
 
-    parser.add_argument("--startcmd")
-    parser.add_argument("--killcmd")
-    parser.add_argument("--monitorinterval");
-    parser.set_defaults(**defaults)
-
-    args = parser.parse_args(remaining_argv)
-
-    print "args: %s" % args
-
-    start_cmd = args.startcmd
-    kill_cmd = args.killcmd
-    process_name = args.process_name
-    monitor_interval = int(args.monitorinterval)
-    wait_for_miner_to_start_time = args.wait_for_miner_to_start_time
-    wait_for_miner_to_stop_time = args.wait_for_miner_to_stop_time
-    monitor_endpoint = args.monitor_endpoint
-    minimum_hashrate = float(args.minimum_hashrate)
+    start_cmd = args.get('start_cmd', config['start_cmd'])
+    kill_cmd = args.get('kill_cmd', config['kill_cmd'])
+    process_name = args.get('process_name', config['process_name'])
+    monitor_interval = int(args.get('monitor_interval', config['monitor_interval']))
+    wait_for_miner_to_start_time = int(args.get('wait_for_miner_to_start_time', config['wait_for_miner_to_start_time']))
+    wait_for_miner_to_stop_time = int(args.get('wait_for_miner_to_stop_time', config['wait_for_miner_to_stop_time']))
+    monitor_endpoint = str(args.get('monitor_endpoint', config['monitor_endpoint']))
+    minimum_hashrate = int(args.get('minimum_hashrate', config['minimum_hashrate']))
 
     #start
     print "START"

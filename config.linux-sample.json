@@ -1,0 +1,13 @@
+{
+  "author": "Made by Javier Ubillos, javier@ubillos.org, github.com/jav",
+  "donations": "For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm",
+
+  "start_cmd": "gnome-terminal --working-directory=/home/YOUR_USERNAME/workspace/xmr-stak -e './xmr-stak'",
+  "kill_cmd": "killall xmr-stak",
+  "process_name": "xmr-stak",
+  "monitor_interval": 60,
+  "monitor_endpoint": "http://127.0.0.1:55055/h",
+  "wait_for_miner_to_stop_time": 20,
+  "wait_for_miner_to_start_time": 60,
+  "minimum_hashrate": 500
+}
