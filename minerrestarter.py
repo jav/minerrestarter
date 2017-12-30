@@ -100,30 +100,31 @@ def main(argv=None):
     start_time = current_time()
 
     #LOGIC LOOP
-
     while(True):
         # Check if miner is running
-        if(not is_miner_process_running(process_name)):
-            run_miner(start_cmd)
+        if(not is_miner_process_running(config['process_name'])):
+            print "Miner process is not running, starting the process."
+            run_miner(config['start_cmd'])
 
         #check hashrate
-        print "checking hashrate..."
-        hashrate = get_hashrate(monitor_endpoint, "60s")
-        print "Hashrate found to be %s" % (hashrate, )
 
-        if hashrate < minimum_hashrate:
-            print "Hashrate lower than minimum_hashrate: %s" % (minimum_hashrate, )
-            print "Killing miner process"
+        if(is_miner_process_running(config['process_name'])):
+            hashrate = get_hashrate(config['monitor_endpoint'], "60s")
+            print "Miner process is running, and reporting hashrate %s."
+
+        if hashrate < config['minimum_hashrate']:
+            print "Hashrate lower than minimum_hashrate: %s => Will restart miner." % (config['minimum_hashrate'], )
             kill_miner(kill_cmd)
             print "Waiting for miner to stop"
-            countdown(wait_for_miner_to_stop_time, lambda : not is_miner_process_running(process_name))
+            countdown(wait_for_miner_to_stop_time, lambda : not is_miner_process_running(config['process_name']))
             print "Starting miner process"
-            run_miner(start_cmd)
+            run_miner(config['start_cmd'])
             print "Waiting for miner to start before starting to monitor"
             countdown(wait_for_miner_to_start_time)
         else:
-            print "hashrate was ok: %s (limit: %s)" % (hashrate, minimum_hashrate)
-            print "sleeping for %s seconds" % monitor_interval
+            print "hashrate was ok: %s (limit: %s)" % (hashrate, config['minimum_hashrate'])
+
+        print "sleeping for %s seconds" % monitor_interval
         countdown(monitor_interval)
 
     return(0)
