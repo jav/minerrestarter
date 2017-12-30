@@ -28,13 +28,7 @@ def countdown(from_time, func=None):
     sys.stdout.flush()
     time.sleep(1)
 
-def main(argv=None):
-    # Do argv default this way, as doing it in the functional
-    # declaration sets it at compile time.
-    if argv is None:
-        argv = sys.argv
-
-
+def get_config(argv):
     conf_parser = argparse.ArgumentParser(        )
     conf_parser.add_argument("-c", "--conf-file",
                         help="Specify config file", default="config.json", metavar="FILE")
@@ -48,34 +42,40 @@ def main(argv=None):
     assert(os.path.isfile(args['conf_file']))
     config = json.load(open(args['conf_file']))
 
-    start_cmd = args.get('start_cmd', config['start_cmd'])
-    kill_cmd = args.get('kill_cmd', config['kill_cmd'])
-    process_name = args.get('process_name', config['process_name'])
-    monitor_interval = int(args.get('monitor_interval', config['monitor_interval']))
-    wait_for_miner_to_start_time = int(args.get('wait_for_miner_to_start_time', config['wait_for_miner_to_start_time']))
-    wait_for_miner_to_stop_time = int(args.get('wait_for_miner_to_stop_time', config['wait_for_miner_to_stop_time']))
-    monitor_endpoint = str(args.get('monitor_endpoint', config['monitor_endpoint']))
-    minimum_hashrate = int(args.get('minimum_hashrate', config['minimum_hashrate']))
+    config['start_cmd'] = args.get('start_cmd', config['start_cmd'])
+    config['kill_cmd'] = args.get('kill_cmd', config['kill_cmd'])
+    config['process_name'] = args.get('process_name', config['process_name'])
+    config['monitor_interval'] = int(args.get('monitor_interval', config['monitor_interval']))
+    config['wait_for_miner_to_start_time'] = int(args.get('wait_for_miner_to_start_time', config['wait_for_miner_to_start_time']))
+    config['wait_for_miner_to_stop_time'] = int(args.get('wait_for_miner_to_stop_time', config['wait_for_miner_to_stop_time']))
+    config['monitor_endpoint'] = str(args.get('monitor_endpoint', config['monitor_endpoint']))
+    config['minimum_hashrate'] = int(args.get('minimum_hashrate', config['minimum_hashrate']))
+
+    return config
+
+def main(argv=None):
+    # Do argv default this way, as doing it in the functional
+    # declaration sets it at compile time.
+    if argv is None:
+        argv = sys.argv
+
+    config = get_config(argv)
+
 
     #start
     print "START"
-    print "start_cmd: %s" % start_cmd
-    print "kill_cmd: %s" % kill_cmd
-    print "proces_name: %s" % process_name
-    print "monitor_interval: %s" % monitor_interval
-    print "wait_for_miner_to_start_time: %s" % wait_for_miner_to_start_time
-    print "wait_for_miner_to_stop_time: %s" % wait_for_miner_to_stop_time
-    print "monitor_endpoint: %s" % monitor_endpoint
+    print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
 
     start_time = current_time()
 
-    # Check if miner is running
-    if(not is_miner_process_running(process_name)):
-        run_miner(start_cmd)
 
-    #Run loop
+    #LOGIC LOOP
 
     while(True):
+        # Check if miner is running
+        if(not is_miner_process_running(process_name)):
+            run_miner(start_cmd)
+
         #check hashrate
         print "checking hashrate..."
         hashrate = get_hashrate(monitor_endpoint, "60s")
