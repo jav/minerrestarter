@@ -35,12 +35,15 @@ def get_config(argv):
 
     conf_parser.add_argument("-n", "--noop",
                         help="Don't do anything, just print out what's detected and what the expected action would be.",
+                        default=False
                         )
     args = vars(conf_parser.parse_args())
 
     #Config file _must_ exist
     assert(os.path.isfile(args['conf_file']))
     config = json.load(open(args['conf_file']))
+
+    config['noop'] = args.get('noop', False)
 
     config['start_cmd'] = args.get('start_cmd', config['start_cmd'])
     config['kill_cmd'] = args.get('kill_cmd', config['kill_cmd'])
@@ -104,7 +107,7 @@ def main(argv=None):
         # Check if miner is running
         if(not is_miner_process_running(config['process_name'])):
             print "Miner process is not running, starting the process."
-            run_miner(config['start_cmd'])
+            run_miner(config['start_cmd'], config['noop'])
 
         #check hashrate
 
@@ -114,11 +117,11 @@ def main(argv=None):
 
         if hashrate < config['minimum_hashrate']:
             print "Hashrate lower than minimum_hashrate: %s => Will restart miner." % (config['minimum_hashrate'], )
-            kill_miner(kill_cmd)
+            kill_miner(kill_cmd, config['noop'])
             print "Waiting for miner to stop"
             countdown(wait_for_miner_to_stop_time, lambda : not is_miner_process_running(config['process_name']))
             print "Starting miner process"
-            run_miner(config['start_cmd'])
+            run_miner(config['start_cmd'], config['noop'])
             print "Waiting for miner to start before starting to monitor"
             countdown(wait_for_miner_to_start_time)
         else:
@@ -130,4 +133,4 @@ def main(argv=None):
     return(0)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
