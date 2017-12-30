@@ -53,6 +53,35 @@ def get_config(argv):
 
     return config
 
+def kill_miner(kill_cmd):
+    try:
+        subprocess.check_output(kill_cmd, shell=True)
+    except subprocess.CalledProcessError as e:
+        print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
+
+def run_miner(start_cmd):
+    # exceptions should cause a failure
+    subprocess.check_output(start_cmd, shell=True)
+
+def is_miner_process_running(miner_process_name):
+    return miner_process_name in (p.name() for p in psutil.process_iter())
+
+def get_hashrate(endpoint, interval):
+    req = urllib2.Request(url=endpoint)
+    try:
+        urlopen = urllib2.urlopen(req)
+        response = urlopen.read()
+    #if we get an exception, it's most likely because the miner isn't running
+    #in these cases, consider hashrate to be = 0
+    except (urllib2.URLError, ValueError):
+            return 0
+    hashrates = re.search("<th>Totals:</th><td>([^<]*)</td><td>([^<]*)</td><td>([^<]*)</td>", response).group(1, 2, 3)
+    hashrate = dict(zip(['10s', '60s', '15m'], hashrates))[interval]
+    #hashrate '0' is often represented as a blank space
+    if(len(hashrate) <= 0):
+        return 0
+    return float(hashrate.strip())
+
 def main(argv=None):
     # Do argv default this way, as doing it in the functional
     # declaration sets it at compile time.
@@ -97,36 +126,6 @@ def main(argv=None):
         countdown(monitor_interval)
 
     return(0)
-
-def kill_miner(kill_cmd):
-    try:
-        subprocess.check_output(kill_cmd, shell=True)
-    except subprocess.CalledProcessError as e:
-        print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
-
-def run_miner(start_cmd):
-    # exceptions should cause a failure
-    subprocess.check_output(start_cmd, shell=True)
-
-def is_miner_process_running(miner_process_name):
-    return miner_process_name in (p.name() for p in psutil.process_iter())
-
-def get_hashrate(endpoint, interval):
-    req = urllib2.Request(url=endpoint)
-    try:
-        urlopen = urllib2.urlopen(req)
-        response = urlopen.read()
-    #if we get an exception, it's most likely because the miner isn't running
-    #in these cases, consider hashrate to be = 0
-    except (urllib2.URLError, ValueError):
-            return 0
-    hashrates = re.search("<th>Totals:</th><td>([^<]*)</td><td>([^<]*)</td><td>([^<]*)</td>", response).group(1, 2, 3)
-    hashrate = dict(zip(['10s', '60s', '15m'], hashrates))[interval]
-    #hashrate '0' is often represented as a blank space
-    if(len(hashrate) <= 0):
-        return 0
-    return float(hashrate.strip())
-
 
 if __name__ == "__main__":
     sys.exit(main())
