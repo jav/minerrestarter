@@ -89,20 +89,15 @@ def get_hashrate(endpoint, interval):
     return float(hashrate.strip())
 
 def main(argv=None):
-    # Do argv default this way, as doing it in the functional
-    # declaration sets it at compile time.
+
     if argv is None:
         argv = sys.argv
-
     config = get_config(argv)
 
-
-    #start
-    print "START"
+    print "!!! START !!!"
     print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
 
     start_time = current_time()
-
 
     #LOGIC LOOP
 
