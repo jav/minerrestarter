@@ -70,6 +70,8 @@ def main(argv=None):
 
     args = parser.parse_args(remaining_argv)
 
+    print "args: %s" % args
+
     start_cmd = args.startcmd
     kill_cmd = args.killcmd
     process_name = args.process_name
@@ -80,7 +82,7 @@ def main(argv=None):
     minimum_hashrate = float(args.minimum_hashrate)
 
     #start
-    print "starting"
+    print "START"
     print "start_cmd: %s" % start_cmd
     print "kill_cmd: %s" % kill_cmd
     print "proces_name: %s" % process_name
@@ -91,14 +93,20 @@ def main(argv=None):
 
     start_time = current_time()
 
+    # Check if miner is running
+    if(not is_miner_process_running(process_name)):
+        run_miner(start_cmd)
+
     #Run loop
 
     while(True):
         #check hashrate
         print "checking hashrate..."
         hashrate = get_hashrate(monitor_endpoint, "60s")
+        print "Hashrate found to be %s" % (hashrate, )
+
         if hashrate < minimum_hashrate:
-            print "Hashrate found to be %s, lower than the limit %s" % (hashrate, minimum_hashrate)
+            print "Hashrate lower than minimum_hashrate: %s" % (minimum_hashrate, )
             print "Killing miner process"
             kill_miner(kill_cmd)
             print "Waiting for miner to stop"
@@ -142,8 +150,6 @@ def get_hashrate(endpoint, interval):
     if(len(hashrate) <= 0):
         return 0
     return float(hashrate.strip())
-
-
 
 
 if __name__ == "__main__":
