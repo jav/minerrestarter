@@ -70,7 +70,7 @@ def kill_miner(kill_cmd, noop=False):
         print "Kill miner."
         return
     try:
-        subprocess.check_output(kill_cmd, shell=True)
+        subprocess.call(kill_cmd, shell=True)
     except subprocess.CalledProcessError as e:
         print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
 
@@ -79,7 +79,8 @@ def run_miner(start_cmd, noop=False):
         print "Start miner."
         return
     # exceptions should cause a failure
-    subprocess.check_output(start_cmd, shell=True)
+    print "Running %s" % start_cmd
+    subprocess.call(start_cmd, shell=True)
 
 def is_miner_process_running(miner_process_name):
     return miner_process_name in (p.name() for p in psutil.process_iter())
@@ -120,6 +121,8 @@ def main(argv=None):
             run_miner(config['start_cmd'], config['noop'])
             countdown(config['wait_for_miner_to_start_time'])
             continue
+        else:
+            print "Miner is running."
         #check hashrate
 
         if(is_miner_process_running(config['process_name'])):
@@ -152,5 +155,5 @@ if __name__ == "__main__":
         print "Asking for admin access... (will spawn another window if access granted)"
         print "DEBUG: sys.executable: %s" % (sys.executable, )
         print "DEBUG: __file__: %s" % (__file__, )
-        cmd = u"%s %s" % (sys.executable, __file__)
+
         ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
