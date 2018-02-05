@@ -101,11 +101,8 @@ def get_hashrate(endpoint, interval):
         return 0
     return float(hashrate.strip())
 
-def main(argv=None):
+def main(config):
 
-    if argv is None:
-        argv = sys.argv
-    config = get_config(argv)
 
     print "!!! START !!!"
     print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
@@ -148,12 +145,15 @@ def main(argv=None):
     return(0)
 
 if __name__ == "__main__":
+
+    config = get_config(sys.argv)
     if platform.system() == "Linux" or is_windows_admin():
-        sys.exit(main(sys.argv))
+        sys.exit(main(config))
     else:
         # Re-run the program with admin rights
         print "Asking for admin access... (will spawn another window if access granted)"
         print "DEBUG: sys.executable: %s" % (sys.executable, )
         print "DEBUG: __file__: %s" % (__file__, )
 
+        ## Call self, as admin
         ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
