@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 #Made by Javier Ubillos, javier@ubillos.org, github.com/jav
 #For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm
@@ -67,19 +67,19 @@ def get_config(argv):
 
 def kill_miner(kill_cmd, noop=False):
     if(noop):
-        print "Kill miner."
+        print("Kill miner.")
         return
     try:
         subprocess.call(kill_cmd, shell=True)
     except subprocess.CalledProcessError as e:
-        print "failed to kill '%s' return with error (code %s): %s" % (e.cmd, e.returncode, e.output)
+        print("failed to kill '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 
 def run_miner(start_cmd, noop=False):
     if(noop):
-        print "Start miner."
+        print("Start miner.")
         return
     # exceptions should cause a failure
-    print "Running %s" % start_cmd
+    print("Running {}".format(start_cmd))
     subprocess.call(start_cmd, shell=True)
 
 def is_miner_process_running(miner_process_name):
@@ -104,8 +104,8 @@ def get_hashrate(endpoint, interval):
 def main(config):
 
 
-    print "!!! START !!!"
-    print "Config: %s" % json.dumps(config, indent=4, sort_keys=True)
+    print("!!! START !!!")
+    print("Config: {}".format(json.dumps(config, indent=4, sort_keys=True)))
 
     start_time = current_time()
 
@@ -114,32 +114,32 @@ def main(config):
     while(True):
         # Check if miner is running
         if(not is_miner_process_running(config['process_name'])):
-            print "Miner process is not running, starting the process."
+            print("Miner process is not running, starting the process.")
             run_miner(config['start_cmd'], config['noop'])
             countdown(config['wait_for_miner_to_start_time'])
             continue
         else:
-            print "Miner is running."
+            print("Miner is running.")
         #check hashrate
 
         if(is_miner_process_running(config['process_name'])):
             hashrate = get_hashrate(config['monitor_endpoint'], "60s")
-            print "Miner process is running, and reporting hashrate %s."
+            print("Miner process is running, and reporting hashrate %s.")
 
         if hashrate < config['minimum_hashrate']:
-            print "Hashrate lower than minimum_hashrate: %s => Will restart miner." % (config['minimum_hashrate'], )
+            print("Hashrate lower than minimum_hashrate: {} => Will restart miner.".format(config['minimum_hashrate']))
             kill_miner(config['kill_cmd'], config['noop'])
-            print "Waiting for miner to stop"
+            print("Waiting for miner to stop")
             countdown(config['wait_for_miner_to_stop_time'], lambda : not is_miner_process_running(config['process_name']))
-            print "Starting miner process"
+            print("Starting miner process")
             run_miner(config['start_cmd'], config['noop'])
-            print "Waiting for miner to start before starting to monitor"
+            print("Waiting for miner to start before starting to monitor")
             countdown(config['wait_for_miner_to_start_time'])
             continue
         else:
-            print "hashrate was ok: %s (limit: %s)" % (hashrate, config['minimum_hashrate'])
+            print("hashrate was ok: {} (limit: {})".format(hashrate, config['minimum_hashrate']))
 
-        print "sleeping for %s seconds before checking again..." % (config['monitor_interval'], )
+        print("sleeping for {} seconds before checking again...".format(config['monitor_interval']))
         countdown(config['monitor_interval'])
 
     return(0)
@@ -151,9 +151,9 @@ if __name__ == "__main__":
         sys.exit(main(config))
     else:
         # Re-run the program with admin rights
-        print "Asking for admin access... (will spawn another window if access granted)"
-        print "DEBUG: sys.executable: %s" % (sys.executable, )
-        print "DEBUG: __file__: %s" % (__file__, )
+        print("Asking for admin access... (will spawn another window if access granted)")
+        print("DEBUG: sys.executable: {}".format(sys.executable))
+        print("DEBUG: __file__: {}".format(__file__))
 
         ## Call self, as admin
         ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
