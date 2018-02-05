@@ -9,3 +9,5 @@ config.ini
 dist/*
 build/*
 config.json
+Pipfile
+Pipfile.lock
