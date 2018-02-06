@@ -4,7 +4,7 @@
 #For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm
 
 import argparse
-import ConfigParser
+import configparser
 import ctypes
 import json
 import os
