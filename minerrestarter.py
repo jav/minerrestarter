@@ -45,6 +45,11 @@ def get_config(argv):
                         help="Don't do anything, just print out what's detected and what the expected action would be.",
                         default=False
                         )
+
+    conf_parser.add_argument("-t", "--test",
+                        help="Test the configuration of a specific step (e.g. 'start_cmd*').",
+                        default=None, metavar="['START', 'KILL', 'PROCESSNAME']"
+                        )
     args = vars(conf_parser.parse_args())
 
     #Config file _must_ exist
@@ -52,6 +57,7 @@ def get_config(argv):
     config = json.load(open(args['conf_file']))
 
     config['noop'] = args.get('noop', False)
+    config['test'] = args.get('test', False)
 
     config['start_cmd'] = args.get('start_cmd', config['start_cmd'])
     config['kill_cmd'] = args.get('kill_cmd', config['kill_cmd'])
@@ -66,7 +72,7 @@ def get_config(argv):
 
 def kill_miner(kill_cmd, noop=False):
     if(noop):
-        print("Kill miner.")
+        print("Kill miner: {}".format(kill_cmd))
         return
     try:
         subprocess.call(kill_cmd, shell=True)
@@ -75,14 +81,16 @@ def kill_miner(kill_cmd, noop=False):
 
 def run_miner(start_cmd, noop=False):
     if(noop):
-        print("Start miner.")
+        print("Start miner: {}".format(start_cmd))
         return
     # exceptions should cause a failure
     print("Running {}".format(start_cmd))
     subprocess.call(start_cmd, shell=True)
 
-def is_miner_process_running(miner_process_name):
-    return miner_process_name in (p.name() for p in psutil.process_iter())
+def is_miner_process_running(miner_process_name, noop=False):
+    ret =  miner_process_name in (p.name() for p in psutil.process_iter())
+    print("Looking for process_name: {}, would return: {}".format(miner_process_name, ret))
+    return ret
 
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
@@ -113,6 +121,19 @@ def main(config):
 
     hashrate = config['minimum_hashrate']
     #LOGIC LOOP
+
+    if("test" in config):
+        if(config['test'] not in ['START', 'KILL', 'PROCESSNAME']):
+            raise ValueError("Chosen command to test: {} is not a testable command".format(config['test']))
+        print("Testing {}".format(config['test']))
+        if('START' == config['test']):
+            run_miner(config['start_cmd'], True)
+        elif('KILL' == config['test']):
+            kill_miner(config['kill_cmd'], True)
+        elif('PROCESSNAME' == config['test']):
+            is_miner_process_running(config['process_name'], True)
+        return
+
     while(True):
         # Check if miner is running
         if(not is_miner_process_running(config['process_name'])):
