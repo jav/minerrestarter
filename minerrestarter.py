@@ -104,8 +104,11 @@ def get_hashrate(endpoint, interval):
 def main(config):
 
 
-    print("!!! START !!!")
-    print("Config: {}".format(json.dumps(config, indent=4, sort_keys=True)))
+    print("Minerrestarter:")
+    print("Created by: Javier Ubillos, javier@ubillos.org, github.com/jav")
+    print("Donations xmr: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm")
+    print("")
+    print("Loading configuration: {}".format(json.dumps(config, indent=4, sort_keys=True)))
 
     start_time = current_time()
 
@@ -152,8 +155,6 @@ if __name__ == "__main__":
     else:
         # Re-run the program with admin rights
         print("Asking for admin access... (will spawn another window if access granted)")
-        print("DEBUG: sys.executable: {}".format(sys.executable))
-        print("DEBUG: __file__: {}".format(__file__))
 
         ## Call self, as admin
         ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
