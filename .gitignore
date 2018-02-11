@@ -11,3 +11,4 @@ build/*
 config.json
 Pipfile
 Pipfile.lock
+*.spec
