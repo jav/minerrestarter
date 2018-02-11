@@ -1,8 +1,5 @@
 {
-  "author": "Made by Javier Ubillos, javier@ubillos.org, github.com/jav",
-  "donations": "For donations: Monero: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm",
-
-  "start_cmd": "start cmd.exe /C \"cd /d C:\\Users\\Jav\\Downloads\\xmr-stak-win64 && xmr-stak.exe\"",
+  "start_cmd": "start cmd.exe /C \"cd /d C:\\Users\\miner\\Downloads\\xmr-stak-win64 && xmr-stak.exe\"",
   "kill_cmd": "taskkill /f /im xmr-stak.exe",
   "process_name": "xmr-stak.exe",
   "monitor_interval": 60,
