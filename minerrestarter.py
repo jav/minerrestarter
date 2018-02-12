@@ -136,15 +136,16 @@ def main(config):
 
     while(True):
         # Check if miner is running
+        print("Check if the miner is running...")
         if(not is_miner_process_running(config['process_name'])):
-            print("Miner process is not running, starting the process.")
+            print("-> Miner process is not running, starting the process.")
             run_miner(config['start_cmd'], config['noop'])
             countdown(config['wait_for_miner_to_start_time'])
             continue
         else:
-            print("Miner is running.")
-        #check hashrate
+            print("-> Miner is running.")
 
+        #check hashrate
         if(is_miner_process_running(config['process_name'])):
             hashrate = get_hashrate(config['monitor_endpoint'], "60s")
             print("Miner process is running, and reporting hashrate %s.")
