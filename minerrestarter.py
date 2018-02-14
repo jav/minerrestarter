@@ -119,14 +119,14 @@ def main(config):
     hashrate = config['minimum_hashrate']
     #LOGIC LOOP
 
-    if("test" in config):
+    if("test" in config and config["test"] is not None):
         if(config['test'] not in ['START', 'KILL', 'PROCESSNAME']):
             raise ValueError("Chosen command to test: {} is not a testable command".format(config['test']))
         print("Testing {}".format(config['test']))
         if('START' == config['test']):
-            run_miner(config['start_cmd'], True)
+            run_miner(config['start_cmd'])
         elif('KILL' == config['test']):
-            kill_miner(config['kill_cmd'], True)
+            kill_miner(config['kill_cmd'])
         elif('PROCESSNAME' == config['test']):
             is_miner_process_running(config['process_name'], True)
         return
