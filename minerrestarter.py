@@ -13,7 +13,7 @@ import re
 import sys
 import subprocess
 import time
-import urllib2
+import urllib.request
 
 current_time = lambda: int(round(time.time() * 1000))
 
@@ -25,8 +25,8 @@ def is_windows_admin():
 
 def countdown(from_time, func=None):
   number=''
-  for i in xrange(int(from_time),-1,-1):
-    for _ in xrange(len(number)):
+  for i in range(int(from_time),-1,-1):
+    for _ in range(len(number)):
       sys.stdout.write('\b')
       if func is not None:
           if func():
@@ -95,8 +95,7 @@ def is_miner_process_running(miner_process_name, noop=False):
 def get_hashrate(endpoint, interval):
     req = urllib2.Request(url=endpoint)
     try:
-        urlopen = urllib2.urlopen(req)
-        response = urlopen.read()
+        response = urllib.request.urlopen.read()
     #if we get an exception, it's most likely because the miner isn't running
     #in these cases, consider hashrate to be = 0
     except (urllib2.URLError, ValueError):
@@ -109,8 +108,6 @@ def get_hashrate(endpoint, interval):
     return float(hashrate.strip())
 
 def main(config):
-
-
     print("Minerrestarter:")
     print("Created by: Javier Ubillos, javier@ubillos.org, github.com/jav")
     print("Donations xmr: 45zBbvea3Hs2xR9AWcQkFy2BnPtoNSrDb59hTftst14qjeEsnzC9SXFXAVJBo3wh1EQzMUYDsGLggFox8hfmwtbxRQzq1Fm")
@@ -178,4 +175,4 @@ if __name__ == "__main__":
         print("Asking for admin access... (will spawn another window if access granted)")
 
         ## Call self, as admin
-        ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
+        ctypes.windll.shell32.ShellExecuteW(None, u"runas", sys.executable, __file__, None, 1)
